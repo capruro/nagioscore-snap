@@ -1,0 +1,43 @@
+name: nagios
+adopt-info: nagios
+summary: Nagios is a host/service/network monitoring program.
+description: |
+  Nagios is a host/service/network monitoring program written in C and released under the GNU General Public License, version 2. 
+  CGI programs are included to allow you to view the current status, history, etc via a web interface if you so desire.
+  
+  Visit the Nagios homepage at https://www.nagios.org for documentation, new releases, bug reports, information on discussion forums, and more.
+
+confinement: strict
+grade: stable
+base: core20
+
+parts:
+  nagios:
+    source: https://github.com/NagiosEnterprises/nagioscore/releases/download/nagios-4.4.6/nagios-4.4.6.tar.gz
+    plugin: autotools
+    autotools-configure-parameters:
+      - --with-httpd-conf=/etc/apache2/sites-enabled
+    override-build: |
+        make all
+        make install-groups-users
+        usermod -a -G nagios www-data
+        snapcraftctl build
+        make install-daemoninit
+        make install-commandmode
+        make install-config
+        make install-webconf
+        a2enmod cgi
+        a2enmod rewrite
+        htpasswd -bc /usr/local/nagios/etc/htpasswd.users nagiosadmin nagiosadmin
+        systemctl restart apache2.service
+    configflags:
+        - --with-httpd-conf=/etc/apache2/sites-enabled
+    build-packages: [autoconf, gcc, libc6, make, wget, unzip, apache2, php, libapache2-mod-php7.4, libgd-dev]
+    stage-packages: [apache2, php, libapache2-mod-php7.4, libgd-dev]
+
+
+apps:
+  nagios:
+    command: nagios
+    daemon: simple
+    plugs: [network, network-bind]
