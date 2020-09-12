@@ -18,10 +18,9 @@ parts:
     autotools-configure-parameters:
       - --with-httpd-conf=/etc/apache2/sites-enabled
     override-build: |
-        make all
+        snapcraftctl build
         make install-groups-users
         usermod -a -G nagios www-data
-        snapcraftctl build
         make install-daemoninit
         make install-commandmode
         make install-config
