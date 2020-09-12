@@ -30,8 +30,6 @@ parts:
         a2enmod rewrite
         htpasswd -bc /usr/local/nagios/etc/htpasswd.users nagiosadmin nagiosadmin
         systemctl restart apache2.service
-    configflags:
-        - --with-httpd-conf=/etc/apache2/sites-enabled
     build-packages: [autoconf, gcc, libc6, make, wget, unzip, apache2, php, libapache2-mod-php7.4, libgd-dev]
     stage-packages: [apache2, php, libapache2-mod-php7.4, libgd-dev]
 
