@@ -1,18 +1,28 @@
 name: nagios
-adopt-info: nagios
+verison: 4.4.6
 summary: Nagios is a host/service/network monitoring program.
 description: |
   Nagios is a host/service/network monitoring program written in C and released under the GNU General Public License, version 2. 
   CGI programs are included to allow you to view the current status, history, etc via a web interface if you so desire.
-  
   Visit the Nagios homepage at https://www.nagios.org for documentation, new releases, bug reports, information on discussion forums, and more.
 
-confinement: strict
+confinement: devel
 grade: stable
-base: core20
+base: core18
+
+apps:
+  core:
+    command: nagios
+    daemon: simple
+    restart-condition: always
+    plugs: [network, network-bind]
+  
+  verifyconfig:
+    command: nagios -v $SNAP_COMMON/usr/local/nagios/etc/nagios.cfg
+
 
 parts:
-  nagios:
+  core:
     source: https://github.com/NagiosEnterprises/nagioscore/releases/download/nagios-4.4.6/nagios-4.4.6.tar.gz
     plugin: autotools
     autotools-configure-parameters:
@@ -30,11 +40,39 @@ parts:
         htpasswd -bc /usr/local/nagios/etc/htpasswd.users nagiosadmin nagiosadmin
         systemctl restart apache2.service
     build-packages: [autoconf, gcc, libc6, make, wget, unzip, apache2, php, libapache2-mod-php7.4, libgd-dev]
-    stage-packages: [apache2, php, libapache2-mod-php7.4, libgd-dev]
-
-
-apps:
-  nagios:
-    command: nagios
-    daemon: simple
-    plugs: [network, network-bind]
+    stage-packages: [wget, unzip, apache2, php, libapache2-mod-php7.4, libgd-dev]
+  
+  plugins:
+    after:
+      - core
+    source: https://nagios-plugins.org/download/nagios-plugins-2.3.3.tar.gz
+    plugin: autotools
+    override-build: |
+      ./tools/setup
+      snapcraftctl build
+    build-packages:
+      - autoconf
+      - gcc
+      - libc6
+      - libmcrypt-dev
+      - make
+      - libssl-dev
+      - wget
+      - bc
+      - gawk
+      - dc
+      - build-essential
+      - snmp
+      - libnet-snmp-perl
+      - gettext
+    stage-packages:
+      - libc6
+      - libmcrypt-dev
+      - libssl-dev
+      - wget
+      - bc
+      - gawk
+      - dc
+      - snmp
+      - libnet-snmp-perl
+      - gettext
