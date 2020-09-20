@@ -1,5 +1,5 @@
 name: nagios
-verison: 4.4.6
+version: 4.4.6
 summary: Nagios is a host/service/network monitoring program.
 description: |
   Nagios is a host/service/network monitoring program written in C and released under the GNU General Public License, version 2. 
@@ -8,7 +8,7 @@ description: |
 
 confinement: devmode
 grade: stable
-base: core18
+base: core20
 
 apps:
   nagios-core:
