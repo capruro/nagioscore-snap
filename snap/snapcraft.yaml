@@ -99,7 +99,6 @@ parts:
       - qmail-tools
       
 
-filesets:
-   nagios: [ usr/local/nagios ]
-stage:
-- $nagios
+layout:
+  usr/local/nagios:
+    bind: $SNAP_COMMON/usr/local/nagios
