@@ -6,12 +6,12 @@ description: |
   CGI programs are included to allow you to view the current status, history, etc via a web interface if you so desire.
   Visit the Nagios homepage at https://www.nagios.org for documentation, new releases, bug reports, information on discussion forums, and more.
 
-confinement: devel
+confinement: devmode
 grade: stable
 base: core18
 
 apps:
-  core:
+  nagios-core:
     command: nagios
     daemon: simple
     restart-condition: always
@@ -22,7 +22,7 @@ apps:
 
 
 parts:
-  core:
+  nagios-core:
     source: https://github.com/NagiosEnterprises/nagioscore/releases/download/nagios-4.4.6/nagios-4.4.6.tar.gz
     plugin: autotools
     autotools-configure-parameters:
@@ -41,10 +41,10 @@ parts:
         systemctl restart apache2.service
     build-packages: [autoconf, gcc, libc6, make, wget, unzip, apache2, php, libapache2-mod-php7.4, libgd-dev]
     stage-packages: [wget, unzip, apache2, php, libapache2-mod-php7.4, libgd-dev]
-  
-  plugins:
+    
+  nagios-plugins:
     after:
-      - core
+      - nagios-core
     source: https://nagios-plugins.org/download/nagios-plugins-2.3.3.tar.gz
     plugin: autotools
     override-build: |
@@ -65,6 +65,17 @@ parts:
       - snmp
       - libnet-snmp-perl
       - gettext
+      - libpqxx3-dev
+      - libdbi-dev
+      - libldap2-dev
+      - libfreeradius-client-dev
+      - libmysqlclient-dev
+      - dnsutils
+      - smbclient
+      - qstat
+      - fping
+      - qmail-tools
+      
     stage-packages:
       - libc6
       - libmcrypt-dev
@@ -76,3 +87,19 @@ parts:
       - snmp
       - libnet-snmp-perl
       - gettext
+      - libpqxx3-dev
+      - libdbi-dev
+      - libldap2-dev
+      - libfreeradius-client-dev
+      - libmysqlclient-dev
+      - dnsutils
+      - smbclient
+      - qstat
+      - fping
+      - qmail-tools
+      
+
+filesets:
+   nagios: [ usr/local/nagios ]
+stage:
+- $nagios
