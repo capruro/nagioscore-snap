@@ -12,13 +12,13 @@ base: core20
 
 apps:
   nagios-core:
-    command: $SNAP_COMMON/usr/local/nagios/bin/nagios
+    command: usr/local/nagios/bin/nagios
     daemon: simple
     restart-condition: always
     plugs: [network, network-bind]
   
   verifyconfig:
-    command: $SNAP_COMMON/usr/local/nagios/bin/nagios -v $SNAP_COMMON/usr/local/nagios/etc/nagios.cfg
+    command: usr/local/nagios/bin/nagios -v usr/local/nagios/etc/nagios.cfg
 
 
 parts:
@@ -26,7 +26,7 @@ parts:
     source: https://github.com/NagiosEnterprises/nagioscore/releases/download/nagios-4.4.6/nagios-4.4.6.tar.gz
     plugin: autotools
     override-build: |
-        ./configure --prefix=$SNAP_COMMON/usr/local --with-httpd-conf=/etc/apache2/sites-enabled
+        ./configure --with-httpd-conf=/etc/apache2/sites-enabled
         make all
         make install-groups-users
         usermod -a -G nagios www-data
@@ -36,7 +36,7 @@ parts:
         make install-webconf
         a2enmod cgi
         a2enmod rewrite
-        htpasswd -bc $SNAP_COMMON/usr/local/nagios/etc/htpasswd.users nagiosadmin nagiosadmin
+        htpasswd -bc /usr/local/nagios/etc/htpasswd.users nagiosadmin nagiosadmin
         systemctl restart apache2.service
     build-packages: [autoconf, gcc, libc6, make, wget, unzip, apache2, php, libapache2-mod-php7.4, libgd-dev]
     stage-packages: [wget, unzip, apache2, php, libapache2-mod-php7.4, libgd-dev]
