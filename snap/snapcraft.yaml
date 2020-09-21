@@ -12,23 +12,23 @@ base: core20
 
 apps:
   nagios-core:
-    command: nagios
+    command: $SNAP_COMMON/usr/local/nagios/bin/nagios
     daemon: simple
     restart-condition: always
     plugs: [network, network-bind]
   
   verifyconfig:
-    command: nagios -v $SNAP_COMMON/usr/local/nagios/etc/nagios.cfg
+    command: $SNAP_COMMON/usr/local/nagios/bin/nagios -v $SNAP_COMMON/usr/local/nagios/etc/nagios.cfg
 
 
 parts:
   nagios-core:
     source: https://github.com/NagiosEnterprises/nagioscore/releases/download/nagios-4.4.6/nagios-4.4.6.tar.gz
     plugin: autotools
-    autotools-configure-parameters:
-      - --with-httpd-conf=/etc/apache2/sites-enabled
+
     override-build: |
-        snapcraftctl build
+        ./configure --prefix=$SNAP_COMMON/usr/local --with-httpd-conf=/etc/apache2/sites-enabled
+        make all
         make install-groups-users
         usermod -a -G nagios www-data
         make install-daemoninit
@@ -47,9 +47,6 @@ parts:
       - nagios-core
     source: https://nagios-plugins.org/download/nagios-plugins-2.3.3.tar.gz
     plugin: autotools
-    override-build: |
-      ./tools/setup
-      snapcraftctl build
     build-packages:
       - autoconf
       - gcc
@@ -65,19 +62,15 @@ parts:
       - snmp
       - libnet-snmp-perl
       - gettext
-      - libpqxx3-dev
       - libdbi-dev
       - libldap2-dev
-      - libfreeradius-client-dev
       - libmysqlclient-dev
       - dnsutils
       - smbclient
       - qstat
       - fping
-      - qmail-tools
       
     stage-packages:
-      - libc6
       - libmcrypt-dev
       - libssl-dev
       - wget
@@ -87,16 +80,13 @@ parts:
       - snmp
       - libnet-snmp-perl
       - gettext
-      - libpqxx3-dev
       - libdbi-dev
       - libldap2-dev
-      - libfreeradius-client-dev
       - libmysqlclient-dev
       - dnsutils
       - smbclient
       - qstat
       - fping
-      - qmail-tools
       
 
 layout:
