@@ -23,7 +23,8 @@ apps:
 
 parts:
   nagios-core:
-    source: https://github.com/NagiosEnterprises/nagioscore/releases/download/nagios-4.4.6/nagios-4.4.6.tar.gz
+    source: https://github.com/NagiosEnterprises/nagioscore.git
+    source-branch: 4.4.6
     plugin: autotools
     override-build: |
         ./configure --with-httpd-conf=/etc/apache2/sites-enabled
@@ -44,8 +45,12 @@ parts:
   nagios-plugins:
     after:
       - nagios-core
-    source: https://nagios-plugins.org/download/nagios-plugins-2.3.3.tar.gz
+    source: https://github.com/nagios-plugins/nagios-plugins.git
+    source-branch: 2.3.3
     plugin: autotools
+    override-build: |
+        ./tools/setup
+        snapcraftctl build
     build-packages:
       - autoconf
       - gcc
@@ -86,7 +91,6 @@ parts:
       - smbclient
       - qstat
       - fping
-      
 
 layout:
   usr/local/nagios:
