@@ -1,5 +1,5 @@
 name: nagios
-version: 4.4.6
+version: 4.4.9
 summary: Nagios is a host/service/network monitoring program.
 description: |
   Nagios is a host/service/network monitoring program written in C and released under the GNU General Public License, version 2. 
@@ -24,7 +24,7 @@ apps:
 parts:
   nagios-core:
     source: https://github.com/NagiosEnterprises/nagioscore.git
-    source-branch: 4.4.6
+    source-branch: nagios-4.4.9
     plugin: autotools
     override-build: |
         ./configure --with-httpd-conf=/etc/apache2/sites-enabled
@@ -46,7 +46,7 @@ parts:
     after:
       - nagios-core
     source: https://github.com/nagios-plugins/nagios-plugins.git
-    source-branch: 2.3.3
+    source-branch: release-2.4.2 
     plugin: autotools
     override-build: |
         ./tools/setup
